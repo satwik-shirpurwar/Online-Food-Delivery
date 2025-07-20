@@ -4,7 +4,7 @@ import { assets } from '../../assets/assets'
 import { StoreContext } from '../../Context/StoreContext'
 import axios from 'axios'
 import { toast } from 'react-toastify'
-import apiClient from '../../services/apiClient'
+
 
 const LoginPopup = ({ setShowLogin }) => {
 
