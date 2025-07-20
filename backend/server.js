@@ -1,4 +1,4 @@
-import express  from "express"
+import express from "express"
 import cors from 'cors'
 import { connectDB } from "./config/db.js"
 import userRouter from "./routes/userRoute.js"
@@ -14,7 +14,19 @@ const port = process.env.PORT || 4000;
 
 // middlewares
 app.use(express.json())
-app.use(cors())
+
+// CORS Configuration - This is the corrected part
+const frontend_url = "https://your-frontend-app-name.vercel.app";
+app.use(cors({
+  origin: frontend_url,
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true
+}));
+app.options("*", cors({
+  origin: frontend_url,
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true
+}));
 
 // db connection
 connectDB()
@@ -22,9 +34,9 @@ connectDB()
 // api endpoints
 app.use("/api/user", userRouter)
 app.use("/api/food", foodRouter)
-app.use("/images",express.static('uploads'))
+app.use("/images", express.static('uploads'))
 app.use("/api/cart", cartRouter)
-app.use("/api/order",orderRouter)
+app.use("/api/order", orderRouter)
 
 app.get("/", (req, res) => {
     res.send("API Working")
