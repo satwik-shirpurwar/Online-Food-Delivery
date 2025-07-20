@@ -2,7 +2,7 @@ import { createContext, useEffect, useState } from "react";
 import { food_list, menu_list } from "../assets/assets";
 import axios from "axios";
 export const StoreContext = createContext(null);
-import apiClient from "../services/apiClient";
+
 
 const StoreContextProvider = (props) => {
 
