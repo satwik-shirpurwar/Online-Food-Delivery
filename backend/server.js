@@ -16,7 +16,7 @@ const port = process.env.PORT || 4000;
 app.use(express.json())
 
 // CORS Configuration - This is the corrected part
-const frontend_url = "online-food-delivery-backend.vercel.app";
+const frontend_url = "https://online-food-delivery-backend.vercel.app";
 app.use(cors({
   origin: frontend_url,
   methods: ["GET", "POST", "PUT", "DELETE"],
