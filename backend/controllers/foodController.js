@@ -1,55 +1,56 @@
 import foodModel from "../models/foodModel.js";
-import fs from 'fs'
+import { cloudinary } from "../config/cloudinary.js";
 
-// all food list
 const listFood = async (req, res) => {
     try {
-        const foods = await foodModel.find({})
-        res.json({ success: true, data: foods })
+        const foods = await foodModel.find({});
+        res.json({ success: true, data: foods });
     } catch (error) {
         console.log(error);
-        res.json({ success: false, message: "Error" })
+        res.json({ success: false, message: "Error fetching food list" });
     }
+};
 
-}
-
-// add food
 const addFood = async (req, res) => {
-
     try {
-        let image_filename = `${req.file.filename}`
-
+        if (!req.file) {
+            return res.json({ success: false, message: "No image file uploaded" });
+        }
+        const imageUrl = req.file.path;
         const food = new foodModel({
             name: req.body.name,
             description: req.body.description,
             price: req.body.price,
-            category:req.body.category,
-            image: image_filename,
-        })
-
+            category: req.body.category,
+            image: imageUrl,
+        });
         await food.save();
-        res.json({ success: true, message: "Food Added" })
+        res.json({ success: true, message: "Food Added Successfully" });
     } catch (error) {
         console.log(error);
-        res.json({ success: false, message: "Error" })
+        res.json({ success: false, message: "Error adding food" });
     }
-}
+};
 
-// delete food
 const removeFood = async (req, res) => {
     try {
-
         const food = await foodModel.findById(req.body.id);
-        fs.unlink(`uploads/${food.image}`, () => { })
-
-        await foodModel.findByIdAndDelete(req.body.id)
-        res.json({ success: true, message: "Food Removed" })
-
+        if (!food) {
+            return res.json({ success: false, message: "Food item not found" });
+        }
+        const imageUrl = food.image;
+        const urlParts = imageUrl.split('/');
+        const publicIdWithFolder = urlParts.slice(urlParts.indexOf('food-delivery-app-assets')).join('/');
+        const publicId = publicIdWithFolder.substring(0, publicIdWithFolder.lastIndexOf('.'));
+        if (publicId) {
+            await cloudinary.uploader.destroy(publicId);
+        }
+        await foodModel.findByIdAndDelete(req.body.id);
+        res.json({ success: true, message: "Food Removed Successfully" });
     } catch (error) {
         console.log(error);
-        res.json({ success: false, message: "Error" })
+        res.json({ success: false, message: "Error removing food" });
     }
+};
 
-}
-
-export { listFood, addFood, removeFood }
+export { listFood, addFood, removeFood };
