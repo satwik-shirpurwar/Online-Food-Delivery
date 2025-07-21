@@ -4,10 +4,10 @@ import mongoose from 'mongoose';
 import 'dotenv/config';
 
 // Route Imports
-import foodRouter from './routes/foodRouter.js';
-import userRouter from './routes/userRouter.js';
-import cartRouter from './routes/cartRouter.js';
-import orderRouter from './routes/orderRouter.js';
+import userRouter from "./routes/userRoute.js";
+import foodRouter from "./routes/foodRoute.js";
+import cartRouter from "./routes/cartRoute.js";
+import orderRouter from "./routes/orderRoute.js";
 
 // --- App Configuration ---
 const app = express();
