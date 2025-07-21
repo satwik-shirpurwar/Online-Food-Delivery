@@ -1,33 +1,42 @@
-import express  from "express"
-import cors from 'cors'
-import { connectDB } from "./config/db.js"
-import userRouter from "./routes/userRoute.js"
-import foodRouter from "./routes/foodRoute.js"
-import 'dotenv/config'
-import cartRouter from "./routes/cartRoute.js"
-import orderRouter from "./routes/orderRoute.js"
+import express from 'express';
+import cors from 'cors';
+import mongoose from 'mongoose';
+import 'dotenv/config';
 
-// app config
-const app = express()
+// Route Imports
+import foodRouter from './routes/foodRouter.js';
+import userRouter from './routes/userRouter.js';
+import cartRouter from './routes/cartRouter.js';
+import orderRouter from './routes/orderRouter.js';
+
+// --- App Configuration ---
+const app = express();
 const port = process.env.PORT || 4000;
 
+// --- Middlewares ---
+app.use(express.json());
+app.use(cors());
 
-// middlewares
-app.use(express.json())
-app.use(cors())
+// --- Database Connection ---
+mongoose.connect(process.env.MONGODB_URI)
+    .then(() => console.log("MongoDB Connected Successfully."))
+    .catch((error) => console.log("DB Connection Error:", error));
 
-// db connection
-connectDB()
+// --- API Endpoints ---
+app.use("/api/food", foodRouter);
+app.use("/api/user", userRouter);
+app.use("/api/cart", cartRouter);
+app.use("/api/order", orderRouter);
 
-// api endpoints
-app.use("/api/user", userRouter)
-app.use("/api/food", foodRouter)
-app.use("/images",express.static('uploads'))
-app.use("/api/cart", cartRouter)
-app.use("/api/order",orderRouter)
-
+// --- Root Endpoint for testing ---
 app.get("/", (req, res) => {
-    res.send("API Working")
-  });
+    res.send("Backend API is Running...");
+});
 
-app.listen(port, () => console.log(`Server started on http://localhost:${port}`))
+// --- Start Server ---
+app.listen(port, () => {
+    console.log(`Server is running on http://localhost:${port}`);
+});
+
+// Export the app for Vercel
+export default app;
